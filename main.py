@@ -1,0 +1,3 @@
+import tracker
+
+tracker.init()
