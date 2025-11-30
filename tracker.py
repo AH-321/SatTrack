@@ -3,6 +3,7 @@ import time
 import os
 
 def init():
+
     print('''Available satellites:
           1: NOAA 8
           2: NOAA 19''')
@@ -22,9 +23,9 @@ def init():
     sat = sats[0]
 
     # Location
-    lat = 50.6949201     # Vancouver example
+    lat = 50.6949201     # SA
     lon = -119.248787
-    elevation = 0
+    elevation = 526
     location = wgs84.latlon(lat, lon, elevation)
 
     ts = load.timescale()
@@ -32,6 +33,7 @@ def init():
     print("Commencing tracking...")
     time.sleep(2)
     main(sat, location, ts, sat_name)
+
 
 def main(sat, location, ts, sat_name):
     while True:
@@ -44,6 +46,8 @@ def main(sat, location, ts, sat_name):
 
         time.sleep(0.1)
         os.system('cls' if os.name == 'nt' else 'clear')
+
+
 
 if __name__ == "__main__":
     init()
