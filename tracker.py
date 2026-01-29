@@ -4,7 +4,6 @@ import os
 import sqlite3
 import geocode
 
-
 def init():
     conn = sqlite3.connect("sats.db")
     cursor = conn.cursor()
@@ -58,11 +57,10 @@ def main(sat, location, ts, sat_name):
         topocentric = difference.at(t)
         alt, az, distance = topocentric.altaz()
 
-        print(f"{sat_name}: Azimuth: {az.degrees:.2f}°  Elevation: {alt.degrees:.2f}°")
+        print(f"{sat_name}: Azimuth: {az.degrees:.2f}°  Elevation: {alt.degrees:.2f}° Distance: {distance.km:.2f} km")
 
         time.sleep(0.1)
         os.system('cls' if os.name == 'nt' else 'clear')
-
 
 if __name__ == "__main__":
     init()
