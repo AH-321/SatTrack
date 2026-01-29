@@ -5,7 +5,16 @@ import sqlite3
 import geocode
 
 def init():
-    conn = sqlite3.connect("sats.db")
+
+    try:
+        os.remove('gp.php')
+    except FileNotFoundError:
+        print("gp.php not found; proceeding...")
+
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    DB_PATH = os.path.join(BASE_DIR, "sats.db")
+
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     # Show available satellites dynamically
@@ -15,8 +24,6 @@ def init():
         print(f"  {sat_select}: {sat_name}")
 
     sat_select = input("Enter selection: ")
-
-    geocode.get_address()
 
     # Database lookup
     cursor.execute(
@@ -55,11 +62,12 @@ def main(sat, location, ts, sat_name):
         t = ts.now()
         difference = sat - location
         topocentric = difference.at(t)
+
         alt, az, distance = topocentric.altaz()
 
         print(f"{sat_name}: Azimuth: {az.degrees:.2f}°  Elevation: {alt.degrees:.2f}° Distance: {distance.km:.2f} km")
 
-        time.sleep(0.1)
+        time.sleep(0.5)
         os.system('cls' if os.name == 'nt' else 'clear')
 
 if __name__ == "__main__":
