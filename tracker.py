@@ -1,32 +1,48 @@
 from skyfield.api import load, wgs84
 import time
 import os
+import sqlite3
+import geocode
+
 
 def init():
+    conn = sqlite3.connect("sats.db")
+    cursor = conn.cursor()
 
-    print('''Available satellites:
-          1: NOAA 8
-          2: NOAA 19''')
-    sat_select = input("Enter selection:")
-    
-    # Sattellite table
-    if sat_select == "1":
-        sat_id = 13923
-        sat_name = 'NOAA 8'
-    elif sat_select == "2":
-        sat_id = 33591
-        sat_name = 'NOAA 19'
+    # Show available satellites dynamically
+    print("Available satellites:")
+    cursor.execute("SELECT sat_select, sat_name FROM satellites ORDER BY sat_select")
+    for sat_select, sat_name in cursor.fetchall():
+        print(f"  {sat_select}: {sat_name}")
+
+    sat_select = input("Enter selection: ")
+
+    geocode.get_address()
+
+    # Database lookup
+    cursor.execute(
+        "SELECT sat_id, sat_name FROM satellites WHERE sat_select = ?",
+        (sat_select,)
+    )
+    row = cursor.fetchone()
+    conn.close()
+
+    if not row:
+        print("Invalid selection.")
+        return
+
+    sat_id, sat_name = row
 
     # Load TLEs
-    stations_url = f'https://celestrak.org/NORAD/elements/gp.php?CATNR={sat_id}&FORMAT=TLE'
+    stations_url = (
+        f'https://celestrak.org/NORAD/elements/gp.php?CATNR={sat_id}&FORMAT=TLE'
+    )
     sats = load.tle_file(stations_url)
     sat = sats[0]
 
     # Location
-    lat = 50.6949201     # SA
-    lon = -119.248787
-    elevation = 526
-    location = wgs84.latlon(lat, lon, elevation)
+    lat, lon, elev = geocode.geocode_address()
+    location = wgs84.latlon(lat, lon, elev)
 
     ts = load.timescale()
 
@@ -48,7 +64,5 @@ def main(sat, location, ts, sat_name):
         os.system('cls' if os.name == 'nt' else 'clear')
 
 
-
 if __name__ == "__main__":
     init()
-

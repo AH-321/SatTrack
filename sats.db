@@ -1,0 +1,11 @@
+CREATE TABLE satellites (
+    sat_select INTEGER PRIMARY KEY,
+    sat_name TEXT NOT NULL,
+    sat_id INTEGER NOT NULL
+    
+);
+INSERT INTO satellites (sat_select, sat_name, sat_id) VALUES
+    (1, 'METEOR-M N2', 40069),
+    (2, 'METEOR-M N2-2', 44387),
+    (3, 'METEOR-M N2-3', 57166),
+    (4, 'METEOR-M N2-4', 59051);
