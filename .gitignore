@@ -1,4 +1,5 @@
 .venv/
 .github/
 __pycache__/
+*.pyc
 gp.php
