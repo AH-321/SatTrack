@@ -54,21 +54,31 @@ def init():
 
     print("Commencing tracking...")
     time.sleep(2)
-    main(sat, location, ts, sat_name)
+    mainloop(sat, location, ts, sat_name)
 
 
-def main(sat, location, ts, sat_name):
+def mainloop(sat, location, ts, sat_name):
     while True:
         t = ts.now()
         difference = sat - location
         topocentric = difference.at(t)
 
-        el, az, distance = topocentric.altaz()
+        elevation, azimuth, distance = topocentric.altaz()
 
-        print(f"{sat_name}: Azimuth: {az.degrees:.2f}°  Elevation: {el.degrees:.2f}° Distance: {distance.km:.2f} km")
+        print(f"{sat_name}: Azimuth: {azimuth.degrees:.2f}°  Elevation: {elevation.degrees:.2f}° Distance: {distance.km:.2f} km")
 
         time.sleep(0.5)
         os.system('cls' if os.name == 'nt' else 'clear')
+
+def fetch(sat, location, ts, sat_name):
+    t = ts.now()
+    difference = sat - location
+    topocentric = difference.at(t)
+
+    elevation, azimuth, distance = topocentric.altaz()
+
+    return elevation, azimuth, distance, sat_name
+
 
 if __name__ == "__main__":
     init()
