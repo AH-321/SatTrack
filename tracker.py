@@ -52,12 +52,18 @@ def init():
 
     ts = load.timescale()
 
-    print("Commencing tracking...")
-    time.sleep(2)
-    mainloop(sat, location, ts, sat_name)
+    #mode select
+    mode = input("  1. for GUI\n  2. for CLI\nChoice: ") 
+    if mode == int(1):
+        mainloop(sat, location, ts, sat_name)
+    elif mode == int(2):
+        mainloop(sat, location, ts, sat_name)
 
 
 def mainloop(sat, location, ts, sat_name):
+    print("Commencing tracking...")
+    time.sleep(2)
+    
     while True:
         t = ts.now()
         difference = sat - location
