@@ -33,8 +33,10 @@ class SatTrackUI:
 def start_tracking():
     tracker.init()
 
-
-if __name__ == "__main__":
+def init():
     root = Tk()
     app = SatTrackUI(root)
     root.mainloop()
+
+if __name__ == "__main__":
+    init()

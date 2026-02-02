@@ -67,11 +67,8 @@ def main(sat, location, ts, sat_name):
 
         print(f"{sat_name}: Azimuth: {az.degrees:.2f}°  Elevation: {el.degrees:.2f}° Distance: {distance.km:.2f} km")
 
-
         time.sleep(0.5)
         os.system('cls' if os.name == 'nt' else 'clear')
-
-
 
 if __name__ == "__main__":
     init()

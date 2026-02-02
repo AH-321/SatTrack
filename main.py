@@ -2,12 +2,13 @@ import tracker
 import serial
 import time
 from tracker import az, alt
+import gui
 
 
 controller = serial.Serial('COM3', 9600)
 
 def init():
-    tracker.init()
+    gui.init()
 
 def main():
     while True:

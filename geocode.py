@@ -29,3 +29,4 @@ def get_elevation(lat, lon):
     except Exception as e:
         print(f"Elevation error: {e}")
         return 0
+    
