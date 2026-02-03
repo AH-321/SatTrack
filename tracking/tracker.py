@@ -51,13 +51,7 @@ def init():
     location = wgs84.latlon(lat, lon, elev)
 
     ts = load.timescale()
-
-    #mode select
-    mode = input("  1. for GUI\n  2. for CLI\nChoice: ") 
-    if mode == int(1):
-        mainloop(sat, location, ts, sat_name)
-    elif mode == int(2):
-        mainloop(sat, location, ts, sat_name)
+    mainloop(sat, location, ts, sat_name)
 
 
 def mainloop(sat, location, ts, sat_name):
