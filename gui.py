@@ -1,5 +1,5 @@
 from tkinter import *
-import tracker
+from tracking import tracker
 
 class SatTrackUI:
     def __init__(self, root):
