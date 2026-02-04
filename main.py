@@ -1,25 +1,32 @@
 from tracking import tracker
-try:
-    import serial
-except Exception:
-    serial = None
-    print("pyserial not installed; serial controller disabled. Install with 'pip install pyserial' to enable hardware output.")
+import os
+import serial
 import time
 import gui
 
 controller = None
 if serial:
-    try:
-        # Update this to the correct port for your OS (e.g., '/dev/ttyUSB0' or 'COM3')
-        controller = serial.Serial('/dev/ttyUSB0', 9600)
-    except Exception as e:
-        controller = None
-        print(f"Unable to open serial port: {e}")
+    if os.name == 'nt':
+        port = 'COM3'
+    else:
+        port = '/dev/ttyUSB0'
+try:
+    controller = serial.Serial(port, 9600)
+except Exception as e:
+    controller = None
+    print(f"Unable to open serial port: {e}")
+
 
 def init():
-    gui.init()
 
-def main():
+    if gui.available():
+        gui.init()
+    else:
+        print("GUI libraries not available; running in console mode.")
+        tracker.init()
+
+
+def send():
     while True:
 
         azimuth, elevation, distance, sat_name = tracker.fetch()
