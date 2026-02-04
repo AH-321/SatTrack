@@ -1,6 +1,7 @@
 from tkinter import *
 from tracking import tracker
 
+
 class SatTrackUI:
     def __init__(self, root):
         self.root = root
@@ -13,6 +14,13 @@ class SatTrackUI:
         root.rowconfigure(3, weight=1)
         root.rowconfigure(4, weight=1)
         root.rowconfigure(5, weight=0)
+
+        options = [
+            "ISS (ZARYA)",
+            "HUBBLE SPACE TELESCOPE",]
+
+        self.default_option = StringVar(root)
+        self.default_option.set(options[0])
 
         # title
         self.root.title("SatTrack v0.5 Alpha")
@@ -27,6 +35,13 @@ class SatTrackUI:
 
         self.address_input = Text(root, width=30, height=2)
         self.address_input.grid(row=2, column=1)
+
+        # dropdowns
+        self.satellite_dropdown_label = Label(root, text="Select Satellite:", font=("Helvetica", 12))
+        self.satellite_dropdown_label.grid(row=3, column=0)
+
+        self.satellite_dropdown = OptionMenu(root, self.default_option, *options)
+        self.satellite_dropdown.grid(row=3, column=3)
 
         # start tracking: read the address from the widget when the button is clicked
         self.start_tracking = Button(
