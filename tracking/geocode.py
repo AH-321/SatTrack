@@ -1,8 +1,9 @@
 from geopy.geocoders import Nominatim
 import requests
 
-def geocode_address():
-    address = input("Enter address: ")
+def geocode_address(address=None):
+    if not address:
+        address = input("Enter address: ")
 
     geolocator = Nominatim(user_agent="OptiByte-SatTrack")
     location = geolocator.geocode(address)

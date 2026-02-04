@@ -2,9 +2,9 @@ from skyfield.api import load, wgs84
 import time
 import os
 import sqlite3
-import geocode
+from . import geocode
 
-def init():
+def init(address=None):
     
     try:
         os.remove('gp.php')
@@ -47,9 +47,24 @@ def init():
     sat = sats[0]
 
     # Location
-    lat, lon, elev = geocode.geocode_address()
-    location = wgs84.latlon(lat, lon, elev)
+    try:
+        if not address:
+            res = geocode.geocode_address()
+        else:
+            res = geocode.geocode_address(address)
+    except TypeError:
+        # Some runtime versions of the module may have a no-argument geocode_address;
+        # fall back to calling it without parameters and notify the user.
+        print("Note: geocode.geocode_address() does not accept an address argument in this process; prompting for address.")
+        res = geocode.geocode_address()
 
+    if not res:
+        print("Unable to determine location; aborting.")
+        return
+
+    lat, lon, elev = res
+    location = wgs84.latlon(lat, lon, elev)
+    
     ts = load.timescale()
     mainloop(sat, location, ts, sat_name)
 

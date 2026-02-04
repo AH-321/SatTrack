@@ -18,20 +18,27 @@ class SatTrackUI:
         self.root.title("SatTrack v1.0")
         self.title_label = Label(root, text="Welcome to SatTrack", font=("Helvetica", 16))
         self.title_label.grid(row=0, column=1)
-        # start tracking
-        self.start_tracking = Button(root, text="Start Tracking", command=start_tracking)
-        self.start_tracking.grid(row=1, column=1)
         # version
         self.version_label = Label(root, text="Version 1.0\n© 2026 OptiByte Systems", font=("Helvetica", 10))
         self.version_label.grid(row=5, column=2)
-        # data
+        # data input
+        self.input_label = Label(root, text="Data Input", font=("Helvetica", 12))
+        self.input_label.grid(row=1, column=1)
+
+        self.address_input = Text(root, width=30, height=2)
+        self.address_input.grid(row=2, column=1)
+
+        # start tracking: read the address from the widget when the button is clicked
+        self.start_tracking = Button(
+            root,
+            text="Start Tracking",
+            command=lambda: tracker.init(self.address_input.get("1.0", "end-1c").strip() or None),
+        )
+        self.start_tracking.grid(row=3, column=1)
         #self.data_label = Label(root, text=f"Azimuth: {tracker.az.degrees:.2f}°  Elevation: {tracker.el.degrees:.2f}°", font=("Helvetica", 12))
         #self.data_label.grid(row=2, column=1)
 
         self.root.geometry("900x500")
-
-def start_tracking():
-    tracker.init()
 
 def init():
     root = Tk()

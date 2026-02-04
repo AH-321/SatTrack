@@ -1,7 +1,6 @@
 from tracking import tracker
 import os
 import serial
-import time
 import gui
 
 controller = None
@@ -18,12 +17,7 @@ except Exception as e:
 
 
 def init():
-
-    if gui.available():
-        gui.init()
-    else:
-        print("GUI libraries not available; running in console mode.")
-        tracker.init()
+    gui.init()
 
 
 def send():
