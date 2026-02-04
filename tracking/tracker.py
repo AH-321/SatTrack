@@ -66,10 +66,10 @@ def init(address=None):
     location = wgs84.latlon(lat, lon, elev)
     
     ts = load.timescale()
-    mainloop(sat, location, ts, sat_name)
+    mainloop(sat, location, ts, sat_name, lat, lon, elev)
 
 
-def mainloop(sat, location, ts, sat_name):
+def mainloop(sat, location, ts, sat_name, lat, lon, elev):
     print("Commencing tracking...")
     time.sleep(2)
     
@@ -81,7 +81,8 @@ def mainloop(sat, location, ts, sat_name):
         elevation, azimuth, distance = topocentric.altaz()
 
         print(f"{sat_name}: Azimuth: {azimuth.degrees:.2f}°  Elevation: {elevation.degrees:.2f}° Distance: {distance.km:.2f} km")
-
+        print(f"Time (UTC): {t.utc_strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"Location: Lat {lat:.6f}°, Lon {lon:.6f}°, Elev {elev} m")
         time.sleep(0.5)
         os.system('cls' if os.name == 'nt' else 'clear')
 

@@ -15,11 +15,11 @@ class SatTrackUI:
         root.rowconfigure(5, weight=0)
 
         # title
-        self.root.title("SatTrack v1.0")
+        self.root.title("SatTrack v0.5 Alpha")
         self.title_label = Label(root, text="Welcome to SatTrack", font=("Helvetica", 16))
         self.title_label.grid(row=0, column=1)
         # version
-        self.version_label = Label(root, text="Version 1.0\n© 2026 OptiByte Systems", font=("Helvetica", 10))
+        self.version_label = Label(root, text="Version 0.5 Alpha\n© 2026 OptiByte Systems", font=("Helvetica", 10))
         self.version_label.grid(row=5, column=2)
         # data input
         self.input_label = Label(root, text="Data Input", font=("Helvetica", 12))
