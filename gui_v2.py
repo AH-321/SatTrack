@@ -9,7 +9,7 @@ class SatTrackUI:
         self.root.geometry("900x500")
         self.root.minsize(700, 400)
 
-        # ----- Root layout (resizable) -----
+        # ----- Root layout -----
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=0)  # title
         root.rowconfigure(1, weight=1)  # main content (grows)
