@@ -12,7 +12,7 @@ class SatTrackUI:
         # ----- Root layout -----
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=0)  # title
-        root.rowconfigure(1, weight=1)  # main content (grows)
+        root.rowconfigure(1, weight=1)  # main content
         root.rowconfigure(2, weight=0)  # footer
 
         # ----- Title -----
@@ -30,7 +30,7 @@ class SatTrackUI:
         main_frame.grid(row=1, column=0, sticky="nsew", padx=20)
         main_frame.columnconfigure(0, weight=1)
         main_frame.columnconfigure(1, weight=1)
-        main_frame.rowconfigure(1, weight=1)  # text box row grows
+        main_frame.rowconfigure(1, weight=1)
 
         # Data input label
         Label(
@@ -71,7 +71,7 @@ class SatTrackUI:
         )
         self.satellite_dropdown.grid(row=2, column=1, sticky="w", padx=10)
 
-        # Start tracking button
+        # Start tracking
         self.start_tracking = Button(
             main_frame,
             text="Start Tracking",
