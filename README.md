@@ -37,6 +37,7 @@ python cli.py
 ## Files & Structure
 - `main.py` — top-level entry (starts the GUI by default).
 - `gui.py` / `gui_v2.py` — Tkinter UI implementations.
+ - `gui.py` / `gui_v2.py` — Tkinter UI implementations. Note: `main.py` has been removed; use `gui.py` or `gui_v2.py` to start the GUI.
 - `tracking/tracker.py` — core tracking logic, TLE fetch, and compute loop.
 - `tracking/geocode.py` — geocoding and elevation helper.
 - `tracking/sats.sql` — SQLite schema and initial satellite list.
@@ -54,12 +55,12 @@ python cli.py
 
 ## Hardware
 - The Arduino/servo controller expects CSV `az,elev\n` over serial at 9600.
-- See `controller/main.ino` for the example sketch.
+ - See `controller/controller.ino` for the example sketch.
 
 ## Known Issues & Notes
 - Interactive flow: `tracker.init()` is interactive using `input()` and may be refactored for non-interactive usage.
 - Mode selection bug: some code compares `input()` directly to an `int`. If you see incorrect behavior, convert input to int (`mode = int(mode)`) or compare to string (`'1'`).
-- `main.py` may call `tracker.fetch()` with missing args in legacy code; be cautious when refactoring.
+ - Some legacy code may reference the removed `main.py`; be cautious when refactoring.
 - Ensure `tracking/sats.db` exists before running; create it with the `sqlite3` command above.
 - `requirements.txt` uses `pyserial`; installing it resolves serial issues.
 
