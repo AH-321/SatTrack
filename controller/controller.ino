@@ -1,3 +1,5 @@
+// This code is currently intended as an example and may require adjustments.
+
 #include <Stepper.h>
 
 // Stepper motor configuration
