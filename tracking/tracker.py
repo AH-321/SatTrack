@@ -72,6 +72,7 @@ def init(address=None):
 def mainloop(sat, location, ts, sat_name, lat, lon, elev):
     print("Commencing tracking...")
     time.sleep(2)
+    clear()
     
     while True:
         t = ts.now()
@@ -84,7 +85,7 @@ def mainloop(sat, location, ts, sat_name, lat, lon, elev):
         print(f"Time (UTC): {t.utc_strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"Location: Lat {lat:.6f}°, Lon {lon:.6f}°, Elev {elev} m")
         time.sleep(0.5)
-        os.system('cls' if os.name == 'nt' else 'clear')
+        clear()
 
 def fetch(sat, location, ts, sat_name):
     t = ts.now()
@@ -94,6 +95,9 @@ def fetch(sat, location, ts, sat_name):
     elevation, azimuth, distance = topocentric.altaz()
 
     return elevation, azimuth, distance, sat_name
+
+def clear():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
 if __name__ == "__main__":
