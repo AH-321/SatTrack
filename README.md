@@ -35,7 +35,7 @@ python cli.py
 ```
 
 ## Files & Structure
-- `main.py` — top-level entry (starts the GUI by default).
+- `main.py` — top-level entry (starts the GUI by default). DEPRECATED
 - `gui.py` / `gui_v2.py` — Tkinter UI implementations.
  - `gui.py` / `gui_v2.py` — Tkinter UI implementations. Note: `main.py` has been removed; use `gui.py` or `gui_v2.py` to start the GUI.
 - `tracking/tracker.py` — core tracking logic, TLE fetch, and compute loop.
