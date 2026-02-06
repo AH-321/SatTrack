@@ -71,5 +71,26 @@ python cli.py
 ## Contributing
 - Fork, branch, and open a PR. Keep changes minimal and focused.
 
-## License
-- MIT
+## License Summary (ANCSL v1.0)
+
+This project is free to use, modify, and share for non-commercial purposes.
+
+It is intended for learning, experimentation, and collaboration within the
+amateur radio community, including individual operators, clubs, and
+educational or non-profit organizations.
+
+You are welcome to:
+- Run the software for personal or club use
+- Study how it works and modify it
+- Share it with others, including modified versions
+
+You may NOT:
+- Sell this software or modified versions of it
+- Include it in a commercial product or paid service
+- Use it as part of a for-profit offering without permission
+
+If you are interested in using this project in a commercial context,
+please contact the author to discuss licensing options.
+
+This summary is provided for convenience only. The full license terms are
+contained in the LICENSE file and are legally binding.
