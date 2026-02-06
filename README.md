@@ -25,7 +25,7 @@ sqlite3 tracking/sats.db < tracking/sats.sql
 3. Run the GUI:
 
 ```bash
-python main.py
+python gui.py
 ```
 
 4. Or run the CLI tracker:
