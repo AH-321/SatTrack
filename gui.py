@@ -1,3 +1,5 @@
+# THIS FILE IS DEPRECATED
+
 from tkinter import *
 from tracking import tracker
 
