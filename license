@@ -1,31 +1,107 @@
 Amateur Non-Commercial Software License (ANCSL) v1.0
 
-Copyright © 2026 Aiden Haglund VA7QNT
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to use, copy, modify, and 
-distribute the Software for non-commercial purposes only, subject to the following conditions:
+Copyright (c) 2026 Aiden Haglund VA7QNT
 
-Non-Commercial Use Only
-- The Software may not be used, distributed, sublicensed, or incorporated into any product or service that is sold, licensed for a fee, or otherwise used for commercial 
-  advantage or monetary compensation.
+----------------------------------------------------------------------
+INTENT
+----------------------------------------------------------------------
 
-Attribution
-- Redistributions of the Software, in source or binary form, must retain this license, the above copyright notice, and any attribution notices included with the Software.
+This software is developed for the amateur radio community with the goal
+of supporting learning, experimentation, and collaboration in receiving,
+tracking, and decoding weather satellite data.
 
-Modifications and Derivative Works
-- You may modify the Software and distribute derivative works, provided that such works are distributed under the same non-commercial terms and include a clear notice of 
-  modification.
+It is intended to be freely available for individual, educational, and
+non-commercial use, including by amateur radio operators, clubs, and
+educational or non-profit institutions.
 
-No Additional Restrictions
-- You may not impose any further restrictions on the rights granted under this license.
+Commercial exploitation of this software—such as selling it, bundling it
+into paid products, or using it as part of a commercial service—runs
+counter to that goal and is not permitted under the terms of this license.
 
-Commercial Licensing
-- Commercial use of the Software is expressly excluded from this license. Entities wishing to use the Software for commercial purposes must obtain a separate commercial 
-  license from the copyright holder.
+The following license terms are intended to clearly define these
+boundaries while encouraging open collaboration and shared learning.
 
-Disclaimer of Warranty
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
-PURPOSE, AND NONINFRINGEMENT.
+----------------------------------------------------------------------
+LICENSE TERMS
+----------------------------------------------------------------------
 
-Limitation of Liability
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, 
-OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to use, copy, modify, and distribute the Software for non-commercial
+purposes only, subject to the following conditions:
+
+1. Non-Commercial Use Only
+
+   The Software may not be used, distributed, sublicensed, or incorporated
+   into any product or service that is sold, licensed for a fee, or
+   otherwise used for commercial advantage or monetary compensation.
+
+2. Attribution
+
+   Redistributions of the Software, in source or binary form, must retain
+   this license text, the above copyright notice, and any existing
+   attribution notices included with the Software.
+
+3. Modifications and Derivative Works
+
+   You may modify the Software and distribute derivative works, provided
+   that:
+   a) such works are distributed solely for non-commercial purposes, and
+   b) such works include a clear notice stating that changes have been
+      made, and
+   c) such works are distributed under the same license terms as this
+      Software.
+
+4. No Additional Restrictions
+
+   You may not impose any additional legal, technical, or contractual
+   restrictions on the rights granted under this license.
+
+5. Commercial Licensing
+
+   Commercial use of the Software is expressly excluded from this license.
+   Any individual or entity wishing to use the Software for commercial
+   purposes must obtain a separate commercial license from the copyright
+   holder.
+
+----------------------------------------------------------------------
+DEFINITION OF COMMERCIAL USE
+----------------------------------------------------------------------
+
+For the purposes of this license, "commercial use" includes, but is not
+limited to:
+
+- Selling the Software or any derivative works
+- Including the Software in a product or service that is sold or licensed
+  for a fee
+- Using the Software as part of a commercial offering, subscription, or
+  hosted service
+- Bundling the Software with hardware or software that is sold for profit
+- Using the Software to provide paid services or support
+
+The following activities are NOT considered commercial use under this
+license:
+
+- Personal use by individuals
+- Use by licensed amateur radio operators
+- Use by amateur radio clubs or community groups
+- Educational use by schools, universities, or non-profit organizations
+- Cost-recovery distribution, where media, hardware, or materials are
+  provided at or below cost with no profit margin
+
+----------------------------------------------------------------------
+DISCLAIMER OF WARRANTY
+----------------------------------------------------------------------
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
+
+----------------------------------------------------------------------
+LIMITATION OF LIABILITY
+----------------------------------------------------------------------
+
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR
+OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OR OTHER DEALINGS IN THE SOFTWARE.
