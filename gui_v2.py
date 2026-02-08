@@ -91,7 +91,7 @@ class SatTrackUI:
 
         Label(
             footer_frame,
-            text="Version 0.5 Alpha\n© 2026 OptiByte Systems",
+            text="Version 0.5 Alpha\n2026 OptiByte Systems",
             font=("Helvetica", 10),
             justify="right",
         ).pack()
