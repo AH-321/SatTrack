@@ -1,6 +1,9 @@
 from tkinter import *
 from tracking import tracker
+import sqlite3
 
+conn = sqlite3.connect('tracking/sats.db')
+cursor = conn.cursor()
 
 class SatTrackUI:
     def __init__(self, root):
@@ -56,10 +59,10 @@ class SatTrackUI:
             font=("Helvetica", 12),
         ).grid(row=2, column=0, sticky="e", padx=10)
 
-        options = [
-            "ISS (ZARYA)",
-            "HUBBLE SPACE TELESCOPE",
-        ]
+        # Populate satellite options from database
+        cursor.execute("SELECT sat_select, sat_name FROM satellites ORDER BY sat_select")
+        options = [row[1] for row in cursor.fetchall()]
+        conn.close()
 
         self.default_option = StringVar(root)
         self.default_option.set(options[0])
