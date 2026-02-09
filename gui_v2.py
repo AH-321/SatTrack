@@ -2,8 +2,6 @@ from tkinter import *
 from tracking import tracker
 import sqlite3
 
-conn = sqlite3.connect('tracking/sats.db')
-cursor = conn.cursor()
 
 class SatTrackUI:
     def __init__(self, root):
@@ -60,6 +58,13 @@ class SatTrackUI:
         ).grid(row=2, column=0, sticky="e", padx=10)
 
         # Populate satellite options from database
+        try:
+            conn = sqlite3.connect('tracking/sats.db')
+            cursor = conn.cursor()
+        except FileNotFoundError:
+            self.panic("sats.db not found; make sure it exists by running "
+            "'sqlite3 tracking/sats.db < tracking/sats.sql' in the tracking directory.")
+            
         cursor.execute("SELECT sat_select, sat_name FROM satellites ORDER BY sat_select")
         options = [row[1] for row in cursor.fetchall()]
         conn.close()
@@ -104,6 +109,27 @@ class SatTrackUI:
             self.address_input.get("1.0", "end-1c").strip() or None
         )
         self.root.destroy()
+
+    def panic(self, message):
+        panic_window = Toplevel(self.root)
+        panic_window.title("Error")
+        panic_window.geometry("300x150")
+        panic_window.resizable(False, False)
+
+        Label(
+            panic_window,
+            text=message,
+            font=("Helvetica", 12),
+            fg="red",
+            wraplength=280,
+            justify="center",
+        ).pack(expand=True, fill="both", padx=10, pady=10)
+
+        Button(
+            panic_window,
+            text="Close",
+            command=panic_window.destroy,
+        ).pack(pady=(0, 10))
 
 
 def init():
