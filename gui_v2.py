@@ -1,12 +1,13 @@
 from tkinter import *
 from tracking import tracker
 import sqlite3
+import os
 
 
 class SatTrackUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("SatTrack v0.5 Alpha")
+        self.root.title("SatTrack v0.6 Alpha")
         self.root.geometry("900x500")
         self.root.minsize(700, 400)
 
@@ -58,16 +59,21 @@ class SatTrackUI:
         ).grid(row=2, column=0, sticky="e", padx=10)
 
         # Populate satellite options from database
+        if not os.path.exists('tracking/sats.db'):
+            self.panic("Database not found. Ensure it exists by running "
+            "'sqlite3 tracking/sats.db < tracking/sats.sql' in the root directory.")
+            return
+        
         try:
             conn = sqlite3.connect('tracking/sats.db')
             cursor = conn.cursor()
-        except FileNotFoundError:
-            self.panic("sats.db not found; make sure it exists by running "
-            "'sqlite3 tracking/sats.db < tracking/sats.sql' in the tracking directory.")
-            
-        cursor.execute("SELECT sat_select, sat_name FROM satellites ORDER BY sat_select")
-        options = [row[1] for row in cursor.fetchall()]
-        conn.close()
+            cursor.execute("SELECT sat_select, sat_name FROM satellites ORDER BY sat_select")
+            options = [row[1] for row in cursor.fetchall()]
+        except sqlite3.OperationalError as e:
+            self.panic(f"Database schema error:\n{e}")
+            return
+        finally:
+            conn.close()
 
         self.default_option = StringVar(root)
         self.default_option.set(options[0])
@@ -99,7 +105,7 @@ class SatTrackUI:
 
         Label(
             footer_frame,
-            text="Version 0.5 Alpha\n2026 OptiByte Systems",
+            text="Version 0.6 Alpha\n2026 OptiByte Systems",
             font=("Helvetica", 10),
             justify="right",
         ).pack()
