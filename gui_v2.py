@@ -138,11 +138,11 @@ class SatTrackUI:
         ).pack(pady=(0, 10))
 
 
-def init():
+def run():
     root = Tk()
     app = SatTrackUI(root)
     root.mainloop()
 
 
 if __name__ == "__main__":
-    init()
+    run()
