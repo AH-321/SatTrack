@@ -22,10 +22,10 @@ python -m pip install -r requirements.txt
 sqlite3 tracking/sats.db < tracking/sats.sql
 ```
 
-3. Run the GUI:
+3. Run the GUI (v2.0):
 
 ```bash
-python gui.py
+python gui_v2.py
 ```
 
 4. Or run the CLI tracker:
@@ -35,16 +35,17 @@ python cli.py
 ```
 
 ## Files & Structure
-- `main.py` — top-level entry (starts the GUI by default). DEPRECATED
-- `gui.py` / `gui_v2.py` — Tkinter UI implementations.
- - `gui.py` / `gui_v2.py` — Tkinter UI implementations. Note: `main.py` has been removed; use `gui.py` or `gui_v2.py` to start the GUI.
+- `gui_v2.py` — Current Tkinter UI implementation (recommended).
+- `gui.py` — Legacy GUI implementation (DEPRECATED).
+- `cli.py` — CLI tracker entry point for interactive satellite tracking.
 - `tracking/tracker.py` — core tracking logic, TLE fetch, and compute loop.
 - `tracking/geocode.py` — geocoding and elevation helper.
 - `tracking/sats.sql` — SQLite schema and initial satellite list.
 - `controller/controller.ino` — Arduino sketch example expecting `az,elev\n` on serial.
 
 ## Architecture & Data Flow
-- The GUI calls `tracker.init()` to select a satellite and start tracking.
+- The GUI (`gui_v2.py`) calls `tracker.init()` to select a satellite and start tracking.
+- The CLI (`cli.py`) provides an interactive command-line interface for tracking.
 - `tracker` fetches TLE data from Celestrak and uses Skyfield to compute az/el/distance.
 - `geocode` uses `geopy` (Nominatim) and OpenTopoData for elevation.
 - Optional serial output sends CSV `az,elev\n` to an Arduino at 9600 baud.
@@ -60,9 +61,9 @@ python cli.py
 ## Known Issues & Notes
 - Interactive flow: `tracker.init()` is interactive using `input()` and may be refactored for non-interactive usage.
 - Mode selection bug: some code compares `input()` directly to an `int`. If you see incorrect behavior, convert input to int (`mode = int(mode)`) or compare to string (`'1'`).
- - Some legacy code may reference the removed `main.py`; be cautious when refactoring.
 - Ensure `tracking/sats.db` exists before running; create it with the `sqlite3` command above.
 - `requirements.txt` uses `pyserial`; installing it resolves serial issues.
+- `gui.py` is deprecated; use `gui_v2.py` instead.
 
 ## Development Tips
 - To run the tracker headlessly, inspect `tracking/tracker.py` and refactor `tracker.init()` to return `(sat, location, ts, sat_name)`.
