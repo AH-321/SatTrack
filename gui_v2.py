@@ -110,9 +110,11 @@ class SatTrackUI:
             justify="right",
         ).pack()
 
+    # ##########FIX THIS###########
     def start(self):
         tracker.init(
-            self.address_input.get("1.0", "end-1c").strip() or None
+            self.address_input.get("1.0", "end-1c").strip() or None,
+            self.satellite_dropdown.get() or None
         )
         self.root.destroy()
 

@@ -4,7 +4,7 @@ import os
 import sqlite3
 from . import geocode
 
-def init(address=None):
+def init(address=None, sat_select=None):
     
     try:
         os.remove('gp.php')
@@ -23,7 +23,11 @@ def init(address=None):
     for sat_select, sat_name in cursor.fetchall():
         print(f"  {sat_select}: {sat_name}")
 
-    sat_select = input("Enter selection: ")
+    
+    if not sat_select:
+        sat_select = input("Enter selection: ")
+    else:
+        print(f"Using provided satellite selection: {sat_select}")
 
     # Database lookup
     cursor.execute(
