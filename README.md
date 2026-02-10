@@ -8,6 +8,12 @@ Lightweight Python satellite tracker (GUI + CLI) for computing azimuth, elevatio
 - Optional serial output for Arduino/servo control (CSV `az,elev\n`).
 
 ## Quick start
+### Windows
+
+1. Simply run `setup.ps1`
+
+### Unix-like
+
 1. Install dependencies:
 
 ```bash
