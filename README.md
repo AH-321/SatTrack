@@ -10,7 +10,7 @@ Lightweight Python satellite tracker (GUI + CLI) for computing azimuth, elevatio
 ## Quick start
 ### Windows
 
-1. Simply run `setup.ps1`
+1. Simply run `setup.ps1` (can also be run for repairs)
 
 ### Unix-like
 
@@ -22,10 +22,10 @@ python -m pip install -r requirements.txt
 # pip install pyserial
 ```
 
-2. Create the satellite DB once (sqlite):
+2. Run setup sript (can also be run for repairs):
 
 ```bash
-sqlite3 tracking/sats.db < tracking/sats.sql
+python setup.py
 ```
 
 3. Run the GUI (v2.0):
@@ -50,7 +50,7 @@ python cli.py
 - `controller/controller.ino` — Arduino sketch example expecting `az,elev\n` on serial.
 
 ## Architecture & Data Flow
-- The GUI (`gui_v2.py`) calls `tracker.init()` to select a satellite and start tracking.
+- The GUI (`gui_v2.py`) calls `tracker.init()` to start tracking. If no values for `address` or `sat_select` are passed by `gui_v2.py`, you will be prompted for entries.
 - The CLI (`cli.py`) provides an interactive command-line interface for tracking.
 - `tracker` fetches TLE data from Celestrak and uses Skyfield to compute az/el/distance.
 - `geocode` uses `geopy` (Nominatim) and OpenTopoData for elevation.
@@ -66,14 +66,15 @@ python cli.py
 
 ## Known Issues & Notes
 - Interactive flow: `tracker.init()` is interactive using `input()` and may be refactored for non-interactive usage.
-- Mode selection bug: some code compares `input()` directly to an `int`. If you see incorrect behavior, convert input to int (`mode = int(mode)`) or compare to string (`'1'`).
-- Ensure `tracking/sats.db` exists before running; create it with the `sqlite3` command above.
+- Ensure `tracking/sats.db` exists before running; create it with the setup script mentioned above, or by using this command:
+  ```bash
+  sqlite3 tracking/sats.db < tracking/sats.sql
+  ```
 - `requirements.txt` uses `pyserial`; installing it resolves serial issues.
 - `gui.py` is deprecated; use `gui_v2.py` instead.
 
 ## Development Tips
 - To run the tracker headlessly, inspect `tracking/tracker.py` and refactor `tracker.init()` to return `(sat, location, ts, sat_name)`.
-- Add a small bootstrap script to create `tracking/sats.db` from `tracking/sats.sql` for smoother setup.
 
 ## Contributing
 - Fork, branch, and open a PR. Keep changes minimal and focused.
