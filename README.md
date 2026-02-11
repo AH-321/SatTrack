@@ -67,9 +67,11 @@ python cli.py
 ## Known Issues & Notes
 - Interactive flow: `tracker.init()` is interactive using `input()` and may be refactored for non-interactive usage.
 - Ensure `tracking/sats.db` exists before running; create it with the setup script mentioned above, or by using this command:
+
   ```bash
   sqlite3 tracking/sats.db < tracking/sats.sql
   ```
+
 - `requirements.txt` uses `pyserial`; installing it resolves serial issues.
 - `gui.py` is deprecated; use `gui_v2.py` instead.
 
