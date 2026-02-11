@@ -5,7 +5,7 @@ import sqlite3
 from . import geocode
 
 def init(address=None, sat_select=None):
-    
+ 
     try:
         os.remove('gp.php')
     except FileNotFoundError:
@@ -20,8 +20,6 @@ def init(address=None, sat_select=None):
     # Show available satellites dynamically
     print("Available satellites:")
     cursor.execute("SELECT sat_select, sat_name FROM satellites ORDER BY sat_select")
-    for sat_select, sat_name in cursor.fetchall():
-        print(f"  {sat_select}: {sat_name}")
 
     
     if not sat_select:

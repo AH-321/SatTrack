@@ -68,7 +68,9 @@ class SatTrackUI:
             conn = sqlite3.connect('tracking/sats.db')
             cursor = conn.cursor()
             cursor.execute("SELECT sat_select, sat_name FROM satellites ORDER BY sat_select")
-            options = [row[1] for row in cursor.fetchall()]
+            rows = cursor.fetchall()
+            self.sat_map = {row[1]: row[0] for row in rows}
+            options = list(self.sat_map.keys())
         except sqlite3.OperationalError as e:
             self.panic(f"Database schema error:\n{e}")
             return
@@ -110,11 +112,13 @@ class SatTrackUI:
             justify="right",
         ).pack()
 
-    # ##########FIX THIS###########
+    # ----- Methods -----
     def start(self):
+        selected_sat = self.default_option.get()
+        sat_select = self.sat_map[selected_sat]
         tracker.init(
             self.address_input.get("1.0", "end-1c").strip() or None,
-            self.satellite_dropdown.get() or None
+            sat_select,
         )
         self.root.destroy()
 
