@@ -2,6 +2,7 @@ from tkinter import *
 from tracking import tracker
 import sqlite3
 import os
+import threading
 
 
 class SatTrackUI:
@@ -116,11 +117,32 @@ class SatTrackUI:
     def start(self):
         selected_sat = self.default_option.get()
         sat_select = self.sat_map[selected_sat]
-        tracker.init(
-            self.address_input.get("1.0", "end-1c").strip() or None,
-            sat_select,
+
+        self.stop_event = threading.Event()
+
+        self.tracker_thread = threading.Thread(
+            target=tracker.init,
+            args=(
+                self.address_input.get("1.0", "end-1c").strip() or None,
+                sat_select,
+                self.stop_event,
+            ),
+            daemon=True
         )
+        self.tracker_thread.start()
+
+        self.start_tracking.config(state="disabled")
+
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_close(self):
+        if hasattr(self, "stop_event"):
+            self.stop_event.set()
+
+        if hasattr(self, "tracker_thread"):
+            self.tracker_thread.join(timeout=2)
         self.root.destroy()
+
 
     def panic(self, message):
         panic_window = Toplevel(self.root)
