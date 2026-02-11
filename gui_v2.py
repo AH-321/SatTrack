@@ -7,7 +7,7 @@ import os
 class SatTrackUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("SatTrack v0.6.0 Alpha")
+        self.root.title("SatTrack v0.6.5 Alpha")
         self.root.geometry("900x500")
         self.root.minsize(700, 400)
 
@@ -107,7 +107,7 @@ class SatTrackUI:
 
         Label(
             footer_frame,
-            text="Version 0.6.0 Alpha\n2026 OptiByte Systems",
+            text="Version 0.6.5 Alpha\n2026 OptiByte Systems",
             font=("Helvetica", 10),
             justify="right",
         ).pack()
