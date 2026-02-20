@@ -9,3 +9,4 @@ INSERT INTO satellites (sat_select, sat_name, sat_id) VALUES
     (2, 'METEOR-M N2-2', 44387),
     (3, 'METEOR-M N2-3', 57166),
     (4, 'METEOR-M N2-4', 59051);
+    -- Enter additional satellite records here as needed

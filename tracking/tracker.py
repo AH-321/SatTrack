@@ -4,8 +4,8 @@ import os
 import sqlite3
 from . import geocode
 
-def init(address=None):
-    
+def init(address=None, sat_select=None, stop_event=None):
+ 
     try:
         os.remove('gp.php')
     except FileNotFoundError:
@@ -20,10 +20,12 @@ def init(address=None):
     # Show available satellites dynamically
     print("Available satellites:")
     cursor.execute("SELECT sat_select, sat_name FROM satellites ORDER BY sat_select")
-    for sat_select, sat_name in cursor.fetchall():
-        print(f"  {sat_select}: {sat_name}")
 
-    sat_select = input("Enter selection: ")
+    
+    if not sat_select:
+        sat_select = input("Enter selection: ")
+    else:
+        print(f"Using provided satellite selection: {sat_select}")
 
     # Database lookup
     cursor.execute(
@@ -66,15 +68,15 @@ def init(address=None):
     location = wgs84.latlon(lat, lon, elev)
     
     ts = load.timescale()
-    mainloop(sat, location, ts, sat_name, lat, lon, elev)
+    mainloop(sat, location, ts, sat_name, lat, lon, elev, stop_event)
 
 
-def mainloop(sat, location, ts, sat_name, lat, lon, elev):
+def mainloop(sat, location, ts, sat_name, lat, lon, elev, stop_event):
     print("Commencing tracking...")
     time.sleep(2)
     clear()
     
-    while True:
+    while not stop_event.is_set():
         t = ts.now()
         difference = sat - location
         topocentric = difference.at(t)
@@ -86,6 +88,7 @@ def mainloop(sat, location, ts, sat_name, lat, lon, elev):
         print(f"Location: Lat {lat:.6f}°, Lon {lon:.6f}°, Elev {elev} m")
         time.sleep(0.5)
         clear()
+    print("Tracking stopped.")
 
 def fetch(sat, location, ts, sat_name):
     t = ts.now()

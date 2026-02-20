@@ -1,11 +1,14 @@
 from tkinter import *
 from tracking import tracker
+import sqlite3
+import os
+import threading
 
 
 class SatTrackUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("SatTrack v0.5 Alpha")
+        self.root.title("SatTrack v0.6.5 Alpha")
         self.root.geometry("900x500")
         self.root.minsize(700, 400)
 
@@ -56,10 +59,24 @@ class SatTrackUI:
             font=("Helvetica", 12),
         ).grid(row=2, column=0, sticky="e", padx=10)
 
-        options = [
-            "ISS (ZARYA)",
-            "HUBBLE SPACE TELESCOPE",
-        ]
+        # Populate satellite options from database
+        if not os.path.exists('tracking/sats.db'):
+            self.panic("Database not found. Ensure it exists by running "
+            "'sqlite3 tracking/sats.db < tracking/sats.sql' in the root directory.")
+            return
+        
+        try:
+            conn = sqlite3.connect('tracking/sats.db')
+            cursor = conn.cursor()
+            cursor.execute("SELECT sat_select, sat_name FROM satellites ORDER BY sat_select")
+            rows = cursor.fetchall()
+            self.sat_map = {row[1]: row[0] for row in rows}
+            options = list(self.sat_map.keys())
+        except sqlite3.OperationalError as e:
+            self.panic(f"Database schema error:\n{e}")
+            return
+        finally:
+            conn.close()
 
         self.default_option = StringVar(root)
         self.default_option.set(options[0])
@@ -91,23 +108,69 @@ class SatTrackUI:
 
         Label(
             footer_frame,
-            text="Version 0.5 Alpha\n2026 OptiByte Systems",
+            text="Version 0.6.5 Alpha\n2026 OptiByte Systems",
             font=("Helvetica", 10),
             justify="right",
         ).pack()
 
+    # ----- Methods -----
     def start(self):
-        tracker.init(
-            self.address_input.get("1.0", "end-1c").strip() or None
+        selected_sat = self.default_option.get()
+        sat_select = self.sat_map[selected_sat]
+
+        self.stop_event = threading.Event()
+
+        self.tracker_thread = threading.Thread(
+            target=tracker.init,
+            args=(
+                self.address_input.get("1.0", "end-1c").strip() or None,
+                sat_select,
+                self.stop_event,
+            ),
+            daemon=True
         )
+        self.tracker_thread.start()
+
+        self.start_tracking.config(state="disabled")
+
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+    def on_close(self):
+        if hasattr(self, "stop_event"):
+            self.stop_event.set()
+
+        if hasattr(self, "tracker_thread"):
+            self.tracker_thread.join(timeout=2)
         self.root.destroy()
 
 
-def init():
+    def panic(self, message):
+        panic_window = Toplevel(self.root)
+        panic_window.title("Error")
+        panic_window.geometry("300x150")
+        panic_window.resizable(False, False)
+
+        Label(
+            panic_window,
+            text=message,
+            font=("Helvetica", 12),
+            fg="red",
+            wraplength=280,
+            justify="center",
+        ).pack(expand=True, fill="both", padx=10, pady=10)
+
+        Button(
+            panic_window,
+            text="Close",
+            command=panic_window.destroy,
+        ).pack(pady=(0, 10))
+
+
+def run():
     root = Tk()
     app = SatTrackUI(root)
     root.mainloop()
 
 
 if __name__ == "__main__":
-    init()
+    run()
