@@ -8,7 +8,7 @@ import threading
 class SatTrackUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("SatTrack v0.6.5 Alpha")
+        self.root.title("SatTrack v0.6.6 Alpha")
         self.root.geometry("900x500")
         self.root.minsize(700, 400)
 
@@ -34,6 +34,15 @@ class SatTrackUI:
         main_frame.columnconfigure(0, weight=1)
         main_frame.columnconfigure(1, weight=1)
         main_frame.rowconfigure(1, weight=1)
+
+        # Hardware export toggle
+        self.hardware_var = BooleanVar()
+        self.hardware_checkbox = Checkbutton(
+            main_frame,
+            text="Enable serial output for hardware control",
+            variable=self.hardware_var,
+        )
+        self.hardware_checkbox.grid(row=0, column=0, columnspan=2, sticky="w", padx=10)
 
         # Data input label
         Label(
@@ -108,7 +117,7 @@ class SatTrackUI:
 
         Label(
             footer_frame,
-            text="Version 0.6.5 Alpha\n2026 OptiByte Systems",
+            text="Version 0.6.6 Alpha\n2026 OptiByte Systems",
             font=("Helvetica", 10),
             justify="right",
         ).pack()
@@ -126,6 +135,7 @@ class SatTrackUI:
                 self.address_input.get("1.0", "end-1c").strip() or None,
                 sat_select,
                 self.stop_event,
+                self.hardware_var.get(),
             ),
             daemon=True
         )

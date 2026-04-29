@@ -3,8 +3,9 @@ import time
 import os
 import sqlite3
 from . import geocode
+import serial
 
-def init(address=None, sat_select=None, stop_event=None):
+def init(address=None, sat_select=None, stop_event=None, hardware_output=False):
  
     try:
         os.remove('gp.php')
@@ -68,10 +69,10 @@ def init(address=None, sat_select=None, stop_event=None):
     location = wgs84.latlon(lat, lon, elev)
     
     ts = load.timescale()
-    mainloop(sat, location, ts, sat_name, lat, lon, elev, stop_event)
+    mainloop(sat, location, ts, sat_name, lat, lon, elev, stop_event, hardware_output)
 
 
-def mainloop(sat, location, ts, sat_name, lat, lon, elev, stop_event):
+def mainloop(sat, location, ts, sat_name, lat, lon, elev, stop_event, hardware_output=False):
     print("Commencing tracking...")
     time.sleep(2)
     clear()
@@ -82,6 +83,10 @@ def mainloop(sat, location, ts, sat_name, lat, lon, elev, stop_event):
         topocentric = difference.at(t)
 
         elevation, azimuth, distance = topocentric.altaz()
+
+        if hardware_output:
+            print("Attempting serial output...")
+            step_conversion(elevation, azimuth)
 
         print(f"{sat_name}: Azimuth: {azimuth.degrees:.2f}°  Elevation: {elevation.degrees:.2f}° Distance: {distance.km:.2f} km")
         print(f"Time (UTC): {t.utc_strftime('%Y-%m-%d %H:%M:%S')}")
@@ -98,6 +103,21 @@ def fetch(sat, location, ts, sat_name):
     elevation, azimuth, distance = topocentric.altaz()
 
     return elevation, azimuth, distance, sat_name
+
+def step_conversion(elevation, azimuth):
+    # Adjust as needed for your hardware
+    azimuth_steps = azimuth.degrees * 10
+    elevation_steps = elevation.degrees * 10
+    send_over_serial(azimuth_steps, elevation_steps)
+
+def send_over_serial(azimuth_steps, elevation_steps):
+    try:
+        ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+        command = f"{azimuth_steps:.2f}, {elevation_steps:.2f}"
+        ser.write(command.encode())
+        ser.close()
+    except serial.SerialException as e:
+        print(f"Serial communication error: {e}")
 
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
