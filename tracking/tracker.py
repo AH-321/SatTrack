@@ -112,7 +112,12 @@ def step_conversion(elevation, azimuth):
 
 def send_over_serial(azimuth_steps, elevation_steps):
     try:
-        ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=1)
+        if os.name == 'nt':
+            port = 'COM3' # Adjust for Windows
+        else:
+            port = '/dev/ttyUSB0' # Adjust for Linux/Mac
+        
+        ser = serial.Serial(port, 9600, timeout=1)
         command = f"{azimuth_steps:.2f}, {elevation_steps:.2f}"
         ser.write(command.encode())
         ser.close()
