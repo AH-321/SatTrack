@@ -33,8 +33,6 @@ const int limitSwitchPin2 = 13;
 
 // Global variables
 volatile bool calibrated = false;
-int currentAz = 0;
-int currentEl = 0;
 
 void setup() {
     // Configure pins
@@ -72,11 +70,72 @@ void setup() {
 }
 
 void loop() {
-    if (!calibated) {
+    if (!calibrated) {
         Serial.println("Calibration error.)");
-        break;
+        return;
     }
 
+    // Check for incoming serial data
+    if(Serial.available() > 0) {
+        String data = Serial.readStringUntil('\n');
+        data.trim();
+        if (data.length() > 0) {
+            parseAndMove(data);
+        }
+    }
+
+}
+
+void parseAndMove(String data) {
+    // Check data validity
+    int commaIndex = data.indexOf(',');
+    if(commaIndex == -1) {
+        Serial.println("ERROR: Invalid data format. Expected: az,el");
+        return;
+    }
+
+    // Extract azimuth and elevation values
+    String azStr = data.substring(0, commaIndex);
+    String elStr = data.substring(commaIndex + 1);
+
+    // Convert to float (expecting degrees)
+    float azVal = azStr.toFloat();
+    float elVal = elStr.toFloat();
+    if (azVal == 0 && azStr != "0") {
+        Serial.println("ERROR: Invalid azimuth value");
+        return;
+    }
+    if (elVal == 0 && elStr != "0") {
+        Serial.println("ERROR: Invalid elevation value");
+        return;
+    }
+
+    // Convert degrees to stepper position
+    float targetAz = azVal * stepsPerRevolution / 360.0;
+    float targetEl = elVal * stepsPerRevolution / 360.0;
+    
+    int targetAzPos = round(targetAz);
+    int targetElPos = round(targetEl);
+
+    if(targetAzPos > 0 && targetAzPos < stepsPerRevolution) {
+        azimuth.moveTo(targetAzPos);
+    }
+    else {
+        Serial.println("ERROR: Azimuth out of range");
+    }
+
+    if(targetElPos > 0 && targetElPos < 900) {
+        elevation.moveTo(targetElPos);
+    }
+    else {
+        Serial.println("ERROR: Elevation out of rannge");
+    }
+
+    // Move motors to target positions
+    while (azimuth.distanceToGo() != 0 || elevation.distanceToGo() != 0) {
+        azimuth.run();
+        elevation.run();
+    }
 }
 
 void calibrate() {
