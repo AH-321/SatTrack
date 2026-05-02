@@ -31,24 +31,31 @@ AccelStepper elevation(MOTOR_INTERFACE_TYPE, stepPinEl, dirPinEl);
 const int limitSwitchPin1 = 7;
 const int limitSwitchPin2 = 13;
 
+// Global variables
+volatile bool calibrated = false;
+int currentAz = 0;
+int currentEl = 0;
+
 void setup() {
     // Configure pins
     pinMode(enablePinAz, OUTPUT);
     pinMode(enablePinEl, OUTPUT);
-    pinMode(microstep1PinAz, OUTPUT);
-    pinMode(microstep2PinAz, OUTPUT);
-    pinMode(microstep1PinEl, OUTPUT);
-    pinMode(microstep2PinEl, OUTPUT);
+    pinMode(microstepPin1Az, OUTPUT);
+    pinMode(microstepPin2Az, OUTPUT);
+    pinMode(microstepPin1El, OUTPUT);
+    pinMode(microstepPin2El, OUTPUT);
+    pinMode(limitSwitchPin1, INPUT_PULLUP);
+    pinMode(limitSwitchPin2, INPUT_PULLUP);
 
     // Enable motors
     digitalWrite(enablePinAz, LOW);
     digitalWrite(enablePinEl, LOW);
 
-    // Configure microstepping (1/32 steps)
-    digitalWrite(microstepPin1Az, LOW);
+    // Configure microstepping (1/16 steps)
+    digitalWrite(microstepPin1Az, HIGH);
     digitalWrite(microstepPin2Az, HIGH);
 
-    digitalWrite(microstepPin1El, LOW);
+    digitalWrite(microstepPin1El, HIGH);
     digitalWrite(microstepPin2El, HIGH);
 
     // Motor configuration
@@ -60,18 +67,48 @@ void setup() {
 
     Serial.begin(9600);
     Serial.println("Initialized, beginning calibration...");
-    
+    calibrate();
 
 }
 
 void loop() {
+    if (!calibated) {
+        Serial.println("Calibration error.)");
+        break;
+    }
 
 }
 
 void calibrate() {
     // Move azimuth to limit switch
-    while(digitalRead(limitSwitchPin1) == LOW) {
+    Serial.println("Moving...");
+    while(digitalRead(limitSwitchPin1) == HIGH) {
         azimuth.setSpeed(-maxSpeed / 2);
         azimuth.runSpeed();
     }
+    Serial.println("Switch triggered, setting position to 0");
+    azimuth.setCurrentPosition(0);
+    azimuth.moveTo(stepsPerRevolution / 4); // Move to 90 degrees
+
+    while(azimuth.distanceToGo() != 0) {
+        azimuth.run();
+    }
+    Serial.println("Azimuth calibrated, beginning elevation calibration...");
+    
+    Serial.println("Moving...");
+    while(digitalRead(limitSwitchPin2) == HIGH) {
+        elevation.setSpeed(-maxSpeed / 2);
+        elevation.runSpeed();
+    }
+    Serial.println("Switch triggered, setting position to 0");
+    elevation.setCurrentPosition(0);
+    elevation.moveTo(stepsPerRevolution / 4); // Move to 90 degrees
+
+    while(elevation.distanceToGo() != 0) {
+        elevation.run();
+    }
+    
+    Serial.println("Elevation calibrated, calibration complete.");
+    calibrated = true;
+
 }
