@@ -1,136 +1,173 @@
-// This code is currently intended as an example and may require adjustments.
+#include <AccelStepper.h>
 
-#include <Stepper.h>
+// This code assumes TMC2209 drivers in Step/Dir mode.
 
-// Stepper motor configuration
-const int stepsPerRevolution = 200;
-const int motorSpeed = 60; // RPM
+#define MOTOR_INTERFACE_TYPE 1
 
-// Stepper motors: azimuth on pins 9-12, elevation on pins 5-8
-Stepper azimuth(stepsPerRevolution, 9, 10, 11, 12);
-Stepper elevation(stepsPerRevolution, 5, 6, 7, 8);
+// Motor parameters
+const int stepsPerRevolution = 3200; // At 1/16 microstepping
+const int maxSpeed = 5000; // Steps per second
+const int acceleration = 500; // Steps per second²
 
-// Limit switch pins (avoid pins 0 and 1 which are RX/TX)
-const int azLimitPin = 2;  // Azimuth home position
-const int elLimitPin = 3;  // Elevation home position
-const int calibrationButton = 4; // Manual calibration trigger
+// Azimuth motor driver pins
+const int dirPinAz = 2;
+const int stepPinAz = 3;
+const int enablePinAz = 4;
+const int microstepPin1Az = 5;
+const int microstepPin2Az = 6;
 
-// State tracking
-volatile boolean calibrationRequested = false;
-int currentAz = 0;
-int currentEl = 0;
+// Elevation motor driver pins
+const int dirPinEl = 8;
+const int stepPinEl = 9;
+const int enablePinEl = 10;
+const int microstepPin1El = 11;
+const int microstepPin2El = 12;
+
+// AccelStepper instances
+AccelStepper azimuth(MOTOR_INTERFACE_TYPE, stepPinAz, dirPinAz);
+AccelStepper elevation(MOTOR_INTERFACE_TYPE, stepPinEl, dirPinEl);
+
+// Limit switch pins
+const int limitSwitchPin1 = 7;
+const int limitSwitchPin2 = 13;
+
+// Global variables
+volatile bool calibrated = false;
 
 void setup() {
-    // Initialize limit switches and button
-    pinMode(azLimitPin, INPUT_PULLUP);
-    pinMode(elLimitPin, INPUT_PULLUP);
-    pinMode(calibrationButton, INPUT_PULLUP);
-    
-    // Set motor speeds
-    azimuth.setSpeed(motorSpeed);
-    elevation.setSpeed(motorSpeed);
-    
-    // Initialize serial communication at 9600 baud
+    // Configure pins
+    pinMode(enablePinAz, OUTPUT);
+    pinMode(enablePinEl, OUTPUT);
+    pinMode(microstepPin1Az, OUTPUT);
+    pinMode(microstepPin2Az, OUTPUT);
+    pinMode(microstepPin1El, OUTPUT);
+    pinMode(microstepPin2El, OUTPUT);
+    pinMode(limitSwitchPin1, INPUT_PULLUP);
+    pinMode(limitSwitchPin2, INPUT_PULLUP);
+
+    // Enable motors
+    digitalWrite(enablePinAz, LOW);
+    digitalWrite(enablePinEl, LOW);
+
+    // Configure microstepping (1/16 steps)
+    digitalWrite(microstepPin1Az, HIGH);
+    digitalWrite(microstepPin2Az, HIGH);
+
+    digitalWrite(microstepPin1El, HIGH);
+    digitalWrite(microstepPin2El, HIGH);
+
+    // Motor configuration
+    azimuth.setMaxSpeed(maxSpeed);
+    azimuth.setAcceleration(acceleration);
+
+    elevation.setMaxSpeed(maxSpeed);
+    elevation.setAcceleration(acceleration);
+
     Serial.begin(9600);
-    Serial.println("SatTrack Controller initialized");
-    Serial.println("Format: az,el (comma-separated integers for steps)");
-    
-    // Perform initial calibration
+    Serial.println("Initialized, beginning calibration...");
     calibrate();
+
 }
 
 void loop() {
-    // Check for manual calibration button press
-    if (digitalRead(calibrationButton) == LOW) {
-        delay(50); // Debounce
-        if (digitalRead(calibrationButton) == LOW) {
-            Serial.println("Calibration triggered");
-            calibrate();
-            Serial.println("Calibration complete");
-        }
-        delay(500); // Prevent multiple triggers
+    if (!calibrated) {
+        Serial.println("Calibration error.)");
+        return;
     }
-    
+
     // Check for incoming serial data
-    if (Serial.available()) {
+    if(Serial.available() > 0) {
         String data = Serial.readStringUntil('\n');
         data.trim();
-        
         if (data.length() > 0) {
             parseAndMove(data);
         }
     }
+
 }
 
 void parseAndMove(String data) {
-    // Expected format: "az,el" where az and el are step counts
-    // Example: "100,50"
-    
+    // Check data validity
     int commaIndex = data.indexOf(',');
-    if (commaIndex == -1) {
-        Serial.println("ERROR: Invalid format. Use: az,el");
+    if(commaIndex == -1) {
+        Serial.println("ERROR: Invalid data format. Expected: az,el");
         return;
     }
-    
+
     // Extract azimuth and elevation values
     String azStr = data.substring(0, commaIndex);
     String elStr = data.substring(commaIndex + 1);
-    
-    // Convert to integers
-    int azSteps = azStr.toInt();
-    int elSteps = elStr.toInt();
-    
-    // Validate inputs
-    if (azSteps == 0 && azStr != "0") {
+
+    // Convert to float (expecting degrees)
+    float azVal = azStr.toFloat();
+    float elVal = elStr.toFloat();
+    if (azVal == 0 && azStr != "0") {
         Serial.println("ERROR: Invalid azimuth value");
         return;
     }
-    if (elSteps == 0 && elStr != "0") {
+    if (elVal == 0 && elStr != "0") {
         Serial.println("ERROR: Invalid elevation value");
         return;
     }
+
+    // Convert degrees to stepper position
+    float targetAz = azVal * stepsPerRevolution / 360.0;
+    float targetEl = elVal * stepsPerRevolution / 360.0;
     
-    // Move motors
-    Serial.print("Moving to Az:");
-    Serial.print(azSteps);
-    Serial.print(" El:");
-    Serial.println(elSteps);
-    
-    // Move azimuth
-    if (azSteps != 0) {
-        azimuth.step(azSteps);
-        currentAz += azSteps;
+    int targetAzPos = round(targetAz);
+    int targetElPos = round(targetEl);
+
+    if(targetAzPos > 0 && targetAzPos < stepsPerRevolution) {
+        azimuth.moveTo(targetAzPos);
     }
-    
-    // Move elevation
-    if (elSteps != 0) {
-        elevation.step(elSteps);
-        currentEl += elSteps;
+    else {
+        Serial.println("ERROR: Azimuth out of range");
     }
-    
-    Serial.println("OK");
+
+    if(targetElPos > 0 && targetElPos < 900) {
+        elevation.moveTo(targetElPos);
+    }
+    else {
+        Serial.println("ERROR: Elevation out of rannge");
+    }
+
+    // Move motors to target positions
+    while (azimuth.distanceToGo() != 0 || elevation.distanceToGo() != 0) {
+        azimuth.run();
+        elevation.run();
+    }
 }
 
 void calibrate() {
-    Serial.println("Starting calibration...");
-    
-    // Calibrate azimuth - move until limit switch is hit
-    Serial.print("Calibrating azimuth...");
-    while (digitalRead(azLimitPin) == HIGH) {
-        azimuth.step(-1);
+    // Move azimuth to limit switch
+    Serial.println("Moving...");
+    while(digitalRead(limitSwitchPin1) == HIGH) {
+        azimuth.setSpeed(-maxSpeed / 2);
+        azimuth.runSpeed();
     }
-    // Back off slightly from limit
-    azimuth.step(5);
-    currentAz = 0;
-    Serial.println(" done");
-    
-    // Calibrate elevation - move until limit switch is hit
-    Serial.print("Calibrating elevation...");
-    while (digitalRead(elLimitPin) == HIGH) {
-        elevation.step(-1);
+    Serial.println("Switch triggered, setting position to 0");
+    azimuth.setCurrentPosition(0);
+    azimuth.moveTo(stepsPerRevolution / 4); // Move to 90 degrees
+
+    while(azimuth.distanceToGo() != 0) {
+        azimuth.run();
     }
-    // Back off slightly from limit
-    elevation.step(5);
-    currentEl = 0;
-    Serial.println(" done");
+    Serial.println("Azimuth calibrated, beginning elevation calibration...");
+    
+    Serial.println("Moving...");
+    while(digitalRead(limitSwitchPin2) == HIGH) {
+        elevation.setSpeed(-maxSpeed / 2);
+        elevation.runSpeed();
+    }
+    Serial.println("Switch triggered, setting position to 0");
+    elevation.setCurrentPosition(0);
+    elevation.moveTo(stepsPerRevolution / 4); // Move to 90 degrees
+
+    while(elevation.distanceToGo() != 0) {
+        elevation.run();
+    }
+    
+    Serial.println("Elevation calibrated, calibration complete.");
+    calibrated = true;
+
 }
