@@ -69,5 +69,9 @@ void loop() {
 }
 
 void calibrate() {
-
+    // Move azimuth to limit switch
+    while(digitalRead(limitSwitchPin1) == LOW) {
+        azimuth.setSpeed(-maxSpeed / 2);
+        azimuth.runSpeed();
+    }
 }
