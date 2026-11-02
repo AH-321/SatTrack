@@ -111,6 +111,7 @@ class SatTrackUI:
             pady=20,
         )
 
+
         # ----- Footer -----
         footer_frame = Frame(root)
         footer_frame.grid(row=2, column=0, sticky="se", padx=15, pady=10)
